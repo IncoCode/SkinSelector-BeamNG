@@ -1,0 +1,19 @@
+{
+    "info": {
+        "name" : "SkinSelector",
+        "author": "Incognito",
+        "version": "0.1",
+        "description": ""
+    },   
+
+	"appearance": {
+        "background" : "opaque",
+        "size" : {
+            "initial" : [190,190]
+        }
+    },	
+
+    "data": {
+        "streams" : ["wheelInfo"]
+    }
+}
