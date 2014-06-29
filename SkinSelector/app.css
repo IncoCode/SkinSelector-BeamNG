@@ -1,21 +1,7 @@
-#popup_box, #popup_box2 {
-    display:none; /* Hide the DIV */
-    position:fixed;
-    height:180px;  
-    width:170px;  
-    background: #dddddd;
-	margin-left: auto ;
-	margin-right: auto ;
-    z-index:100;
-	border-radius: 7px;
+button {
+	width: 99%;
 }
 
-#container {
-    background: #f9f9f9; /*Sample*/
-    width:100%;
-    height:100%;
-}
-
-button, #saveWayPoints, #closeSaveForm {
-	width: 98%;
+select {
+	width: 99%;
 }
