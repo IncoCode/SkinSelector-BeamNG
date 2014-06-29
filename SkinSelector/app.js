@@ -37,9 +37,12 @@ function updSkins() {
 	callLuaFuncCallback('v.vehicleDirectory', function(result) {		
 		callGameEngineFuncCallback( 'getDirectoryList("' +result +"skins/" +'")', function(arg) {
 			$('#skins').append('<option value="Default">Default</option>');
+			if ( arg == "" ) {
+				return;
+			}
 			//console.log(arg);
 			var skinsArr = arg.split('	');
-			$('#skins').append(option);
+			$('#skins').append(option);			
 			for ( var i = 0; i < skinsArr.length; i++ ) {			
 				var option = $("<option></option>")
 					.attr("value", skinsArr[i])
