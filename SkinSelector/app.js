@@ -65,11 +65,15 @@ function updSkinsList() {
 }
 
 SkinSelector.prototype.initialize = function(){
+	$('<label>Skin:</label>').appendTo(this.rootElement);	
 	$('<select id="skins"></select>').appendTo(this.rootElement);
-	$('<button id="selectSkin">Select skin</button>').appendTo(this.rootElement).click(function(){
+	$('<button id="selectSkin">Select</button>').appendTo(this.rootElement).click(function(){
 		console.log('selectSkin click');
 		var selectedSkin = $("#skins option:selected").val();
 		selectSkin( selectedSkin );
+	});
+	$('<button id="hide">Hide</button>').appendTo(this.rootElement).click(function(){
+		$('.SkinSelector').parent().parent().hide( 'slow' );
 	});
 	$( document ).bind( "keydown", function(evt) {
 		if ( evt.ctrlKey && evt.keyCode == 83 )
@@ -89,7 +93,7 @@ SkinSelector.prototype.initialize = function(){
 	});
 		
 	console.log("SkinSelector inizialize");
-	updSkinsList();
+	updSkinsList();	
 };
 
 SkinSelector.prototype.update = function(streams) {
