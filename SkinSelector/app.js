@@ -1,4 +1,4 @@
-// by Incognito, http://www.beamng.com/threads/8871-Skin-Selector
+// by Incognito, http://www.beamng.com/threads/8871-Skin-Selector?p=123485&viewfull=1#post123485
 
 function SkinSelector(){}
 
@@ -69,8 +69,8 @@ function updSkinsList() {
 SkinSelector.prototype.initialize = function(){
 	$('<label>Skin:</label>').appendTo(this.rootElement);	
 	$('<select id="skins"></select>').appendTo(this.rootElement);
-	$('<button id="selectSkin">Select</button>').appendTo(this.rootElement).click(function(){
-		console.log('selectSkin click');
+	$('<button id="selectSkinBtn">Select</button>').appendTo(this.rootElement).click(function(){
+		console.log('selectSkinBtn click');
 		var selectedSkin = $("#skins option:selected").val();
 		selectSkin( selectedSkin );
 	});

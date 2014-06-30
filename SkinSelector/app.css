@@ -1,7 +1,7 @@
-button {
+.SkinSelector button {
 	width: 99%;
 }
 
-select {
+.SkinSelector select {
 	width: 99%;
 }
