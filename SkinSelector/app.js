@@ -1,5 +1,7 @@
 function SkinSelector(){}
 
+vehicleLastSkin = {}
+
 function changeMatFile(vehicleDir, skinName) {	
 	var code = 'function getSkinsFiles(%vehicleDir, %skinDir) { if ( isFile( %vehicleDir @ "skins/materials_def.cs" ) ) { pathCopy( %vehicleDir @ "skins/materials_def.cs", %vehicleDir @ "materials.cs", false ); } else { return "nope"; } if ( endsWith( %skinDir, "/Default" ) ) { return "default"; } %str = ""; %fileReader = new FileObject(); %fileReader.openForRead( %vehicleDir @ "materials.cs" ); while ( !%fileReader.isEOF() ) { %tmp = %str; %line = %fileReader.readLine(); %str = %tmp NL %line; } %fileReader.close(); for( %file = findFirstFile( %skinDir @ "/*.dds" ); %file !$= ""; %file = findNextFile() ) { %filename = strreplace( %file, %skinDir @ "/", "" ); %str = strreplace( %str, %vehicleDir @ %filename, %file ); } %fileReader = new FileObject(); %fileReader.openForWrite(%vehicleDir @ "materials.cs"); %fileReader.writeLine(%str); %fileReader.close(); return "done"; }'; // replacing in materials.cs
 	executeGameEngineCode( code );
@@ -13,9 +15,9 @@ function changeMatFile(vehicleDir, skinName) {
 }
 
 function selectSkin(skinName) {
-	callLuaFuncCallback('v.vehicleDirectory', function(result) {		
-		var materialsFile = result +'materials.cs';
-		var defaultMaterialsFile = result +'skins/materials_def.cs';
+	callLuaFuncCallback('v.vehicleDirectory', function(vDir) {		
+		var materialsFile = vDir +'materials.cs';
+		var defaultMaterialsFile = vDir +'skins/materials_def.cs';
 		//console.log('matFile=' +materialsFile);
 		//console.log('backMatFile=' +defaultMaterialsFile);
 		callGameEngineFuncCallback('isFile("' +defaultMaterialsFile +'")', function(res) {
@@ -25,28 +27,37 @@ function selectSkin(skinName) {
 					console.log('backup done');
 				});
 			}
-			changeMatFile( result, skinName);
+			changeMatFile( vDir, skinName );
+			vehicleLastSkin[vDir] = skinName;
 		});
 	});
 }
 
-function updSkins() {
+function updSkinsList() {
 	$('#skins')
 		.find('option')
 		.remove();
-	callLuaFuncCallback('v.vehicleDirectory', function(result) {		
-		callGameEngineFuncCallback( 'getDirectoryList("' +result +"skins/" +'")', function(arg) {
+	callLuaFuncCallback('v.vehicleDirectory', function(vDir) {		
+		callGameEngineFuncCallback( 'getDirectoryList("' +vDir +"skins/" +'")', function(arg) {
 			$('#skins').append('<option value="Default">Default</option>');
 			if ( arg == "" ) {
 				return;
 			}
+			var lastSkin = "";
+			if ( vDir in vehicleLastSkin ) {
+				lastSkin = vehicleLastSkin[vDir];
+			}
 			//console.log(arg);
 			var skinsArr = arg.split('	');
 			$('#skins').append(option);			
-			for ( var i = 0; i < skinsArr.length; i++ ) {			
+			for ( var i = 0; i < skinsArr.length; i++ ) {
+				var skin = skinsArr[i];
 				var option = $("<option></option>")
-					.attr("value", skinsArr[i])
-					.text(skinsArr[i]);
+					.attr("value", skin)
+					.text(skin);
+				if ( skin == lastSkin ) {
+					option.attr("selected", "1");
+				}
 				$('#skins').append(option);
 			}
 		});
@@ -72,13 +83,13 @@ SkinSelector.prototype.initialize = function(){
 			else
 			{
 				$('.SkinSelector').parent().parent().show( 'slow' );
-				updSkins();
+				updSkinsList();
 			}
 		}
 	});
 		
 	console.log("SkinSelector inizialize");
-	updSkins();
+	updSkinsList();
 };
 
 SkinSelector.prototype.update = function(streams) {
