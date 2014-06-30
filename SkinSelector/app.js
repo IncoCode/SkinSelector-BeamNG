@@ -1,3 +1,5 @@
+// by Incognito, http://www.beamng.com/threads/8871-Skin-Selector
+
 function SkinSelector(){}
 
 vehicleLastSkin = {}
