@@ -1,7 +1,13 @@
-.SkinSelector button {
+.app .SkinSelector .ssBtn {
 	width: 99%;
 }
 
-.SkinSelector select {
+.app .SkinSelector .ssSelect {
 	width: 99%;
+}
+
+.app .SkinSelector .ssDiv {
+	background-color: RGBA(255,255,255,0.9);
+	border-radius: 8px;
+    padding: 5px;
 }

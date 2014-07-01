@@ -2,102 +2,103 @@
 
 function SkinSelector(){}
 
-vehicleLastSkin = {}
+SkinSelector.prototype.changeMatFile = function(vehicleDir, skinName) {
+	var self = this;
 
-function changeMatFile(vehicleDir, skinName) {	
 	var code = 'function getSkinsFiles(%vehicleDir, %skinDir) { if ( isFile( %vehicleDir @ "skins/materials_def.cs" ) ) { pathCopy( %vehicleDir @ "skins/materials_def.cs", %vehicleDir @ "materials.cs", false ); } else { return "nope"; } if ( endsWith( %skinDir, "/Default" ) ) { return "default"; } %str = ""; %fileReader = new FileObject(); %fileReader.openForRead( %vehicleDir @ "materials.cs" ); while ( !%fileReader.isEOF() ) { %tmp = %str; %line = %fileReader.readLine(); %str = %tmp NL %line; } %fileReader.close(); for( %file = findFirstFile( %skinDir @ "/*.dds" ); %file !$= ""; %file = findNextFile() ) { %filename = strreplace( %file, %skinDir @ "/", "" ); %str = strreplace( %str, %vehicleDir @ %filename, %file ); } %fileReader = new FileObject(); %fileReader.openForWrite(%vehicleDir @ "materials.cs"); %fileReader.writeLine(%str); %fileReader.close(); return "done"; }'; // replacing in materials.cs
 	executeGameEngineCode( code );
-	//console.log(vehicleDir +"skins/" +skinName);
 	var skinDir = vehicleDir +"skins/" +skinName;
 	callGameEngineFuncCallback('getSkinsFiles("' +vehicleDir +'", "' +skinDir +'")', function(result) {
-		//console.log('skins=' +result);
 		callGameEngineFunc('beamNGReloadCurrentVehicle();');
-		$('.SkinSelector').parent().parent().hide( 'slow' );
-	});			
+		self.hide();
+	});
 }
 
-function selectSkin(skinName) {
-	callLuaFuncCallback('v.vehicleDirectory', function(vDir) {		
+SkinSelector.prototype.selectSkin = function(skinName) {
+	var self = this;
+
+	callLuaFuncCallback('v.vehicleDirectory', function(vDir) {
 		var materialsFile = vDir +'materials.cs';
 		var defaultMaterialsFile = vDir +'skins/materials_def.cs';
-		//console.log('matFile=' +materialsFile);
-		//console.log('backMatFile=' +defaultMaterialsFile);
 		callGameEngineFuncCallback('isFile("' +defaultMaterialsFile +'")', function(res) {
-			//console.log('res=' +res);
 			if (res == 0) {
 				callGameEngineFuncCallback('pathCopy("' +materialsFile +'", "' +defaultMaterialsFile +'", false)', function(res) {
 					console.log('backup done');
 				});
 			}
-			changeMatFile( vDir, skinName );
-			vehicleLastSkin[vDir] = skinName;
+			self.changeMatFile( vDir, skinName );
+			self.vehicleLastSkin[vDir] = skinName;
 		});
 	});
 }
 
-function updSkinsList() {
-	$('#skins')
-		.find('option')
-		.remove();
-	callLuaFuncCallback('v.vehicleDirectory', function(vDir) {		
+SkinSelector.prototype.updSkinsList = function() {
+	$(this.skinList).empty();
+	var self = this;
+
+	callLuaFuncCallback('v.vehicleDirectory', function(vDir) {
 		callGameEngineFuncCallback( 'getDirectoryList("' +vDir +"skins/" +'")', function(arg) {
-			$('#skins').append('<option value="Default">Default</option>');
+			$(self.skinList).append('<option value="Default">Default</option>');
 			if ( arg == "" ) {
 				return;
 			}
 			var lastSkin = "";
-			if ( vDir in vehicleLastSkin ) {
-				lastSkin = vehicleLastSkin[vDir];
+			if ( vDir in self.vehicleLastSkin ) {
+				lastSkin = self.vehicleLastSkin[vDir];
 			}
-			//console.log(arg);
 			var skinsArr = arg.split('	');
-			$('#skins').append(option);			
+			$(self.skinList).append(option);
 			for ( var i = 0; i < skinsArr.length; i++ ) {
 				var skin = skinsArr[i];
 				var option = $("<option></option>")
 					.attr("value", skin)
 					.text(skin);
 				if ( skin == lastSkin ) {
-					option.attr("selected", "1");
+					option.attr("selected", "");
 				}
-				$('#skins').append(option);
+				$(self.skinList).append(option);
 			}
 		});
-	});	
+	});
+}
+
+SkinSelector.prototype.hide = function() {
+	$(this.rootElement).hide("slow");
+}
+
+SkinSelector.prototype.show = function() {
+	$(this.rootElement).show("slow");
 }
 
 SkinSelector.prototype.initialize = function(){
-	$('<label>Skin:</label>').appendTo(this.rootElement);	
-	$('<select id="skins"></select>').appendTo(this.rootElement);
-	$('<button id="selectSkinBtn">Select</button>').appendTo(this.rootElement).click(function(){
-		console.log('selectSkinBtn click');
-		var selectedSkin = $("#skins option:selected").val();
-		selectSkin( selectedSkin );
+	var self = this;
+	this.vehicleLastSkin = {};
+
+	this.rootDiv = $('<div class="ssDiv"></div>').appendTo(this.rootElement);
+	$('<label>Skin:</label>').appendTo(this.rootDiv);
+	this.skinList = $('<select class="ssSelect"></select>').appendTo(this.rootDiv);
+	$('<button class="ssBtn">Select</button>').appendTo(this.rootDiv).click(function(){
+		var selectedSkin = $(self.skinList).val();
+		self.selectSkin( selectedSkin );
 	});
-	$('<button id="hide">Hide</button>').appendTo(this.rootElement).click(function(){
-		$('.SkinSelector').parent().parent().hide( 'slow' );
+	$('<button class="ssBtn">Hide</button>').appendTo(this.rootDiv).click(function(){
+		self.hide();
 	});
 	$( document ).bind( "keydown", function(evt) {
 		if ( evt.ctrlKey && evt.keyCode == 83 )
 		{
-			//console.log('1');
-			//console.log($(this).width());
-			if ($('.SkinSelector').is(':visible'))
+			if ($(self.rootDiv).is(':visible'))
 			{
-				$('.SkinSelector').parent().parent().hide( 'slow' );
+				self.hide();
 			}
 			else
 			{
-				$('.SkinSelector').parent().parent().show( 'slow' );
-				updSkinsList();
+				self.show();
+				self.updSkinsList();
 			}
 		}
 	});
-		
+
 	console.log("SkinSelector inizialize");
-	updSkinsList();	
+	this.updSkinsList();
 };
-
-SkinSelector.prototype.update = function(streams) {
-
-}
