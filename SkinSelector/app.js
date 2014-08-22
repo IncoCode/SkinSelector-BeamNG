@@ -2,13 +2,19 @@
 
 function SkinSelector(){}
 
-SkinSelector.prototype.changeMatFile = function(vehicleDir, skinName) {
+SkinSelector.prototype.executeScriptFile = function(fileName) {
 	var self = this;
 
-	var code = 'function getSkinsFiles(%vehicleDir, %skinDir) { if ( isFile( %vehicleDir @ "skins/materials_def.cs" ) ) { pathCopy( %vehicleDir @ "skins/materials_def.cs", %vehicleDir @ "materials.cs", false ); } else { return "nope"; } if ( endsWith( %skinDir, "/Default" ) ) { return "default"; } %str = ""; %fileReader = new FileObject(); %fileReader.openForRead( %vehicleDir @ "materials.cs" ); while ( !%fileReader.isEOF() ) { %tmp = %str; %line = %fileReader.readLine(); %str = %tmp NL %line; } %fileReader.close(); for( %file = findFirstFile( %skinDir @ "/*.dds" ); %file !$= ""; %file = findNextFile() ) { %filename = strreplace( %file, %skinDir @ "/", "" ); %str = strreplace( %str, %vehicleDir @ %filename, %file ); } %fileReader = new FileObject(); %fileReader.openForWrite(%vehicleDir @ "materials.cs"); %fileReader.writeLine(%str); %fileReader.close(); return "done"; }'; // replacing in materials.cs
-	executeGameEngineCode( code );
+	var filePath = '"./html/' +self.path +fileName + '"';
+	executeGameEngineCode( 'exec('+ filePath +');' );
+}
+
+SkinSelector.prototype.changeMatFile = function(vehicleDir, skinName) {
+	var self = this;
 	var skinDir = vehicleDir +"skins/" +skinName;
-	callGameEngineFuncCallback('getSkinsFiles("' +vehicleDir +'", "' +skinDir +'")', function(result) {
+
+	self.executeScriptFile( 'getSkinsFilesFunc.cs' );
+	callGameEngineFuncCallback('getSkinsFiles("' +vehicleDir +'", "' +skinDir +'", "' +skinName +'")', function(result) {
 		callGameEngineFunc('beamNGReloadCurrentVehicle();');
 		self.hide();
 	});

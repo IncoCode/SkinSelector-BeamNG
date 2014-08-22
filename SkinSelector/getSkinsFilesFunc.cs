@@ -1,4 +1,4 @@
-function getSkinsFiles(%vehicleDir, %skinDir) {	
+function getSkinsFiles( %vehicleDir, %skinDir, %skinName ) {
 	if ( isFile( %vehicleDir @ "skins/materials_def.cs" ) ) {
 		pathCopy( %vehicleDir @ "skins/materials_def.cs", %vehicleDir @ "materials.cs", false );
 	}
@@ -14,16 +14,19 @@ function getSkinsFiles(%vehicleDir, %skinDir) {
 	while ( !%fileReader.isEOF() ) {
 		%tmp = %str;
 		%line = %fileReader.readLine();
+		for( %file = findFirstFile( %skinDir @ "/*.dds" ); %file !$= ""; %file = findNextFile() ) {
+			%filename = strreplace( %file, %skinDir @ "/", "" );
+			if ( strpos( %line, %filename ) >= 0 ) {
+				%line = strreplace( %line, %vehicleDir, "" );
+				%line = strreplace( %line, %filename, %file );
+			}
+		}
 		%str = %tmp NL %line;
 	}
 	%fileReader.close();
-	for( %file = findFirstFile( %skinDir @ "/*.dds" ); %file !$= ""; %file = findNextFile() ) {				
-		%filename = strreplace( %file, %skinDir @ "/", "" );
-		%str = strreplace( %str, %vehicleDir @ %filename, %file );
-	}
 	%fileReader = new FileObject();
 	%fileReader.openForWrite(%vehicleDir @ "materials.cs");
 	%fileReader.writeLine(%str);
-	%fileReader.close();	
+	%fileReader.close();
 	return "done";
 }
