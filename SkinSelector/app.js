@@ -105,6 +105,6 @@ SkinSelector.prototype.initialize = function(){
 		}
 	});
 
-	console.log("SkinSelector inizialize");
-	this.updSkinsList();
+	console.log("SkinSelector inizialize");	
+	self.hide();
 };
