@@ -7,6 +7,10 @@ How to use
 ----------
 Download any skin, create a folder for this skin in _**\<game_folder\>\vehicles\\\<vehicle_name\>\skins**_ (if _skins_ folder does not exist - create it) and copy the skin files to this folder.
 
+How to install
+--------------
+Just extract the [archive](https://github.com/IncoCode/SkinSelector-BeamNG/releases/latest) in **\<game_folder\>\html\apps** .
+
 Example
 -------
 You need to install two skins: [Pigeon Crash Test Skin](http://www.beamng.com/threads/8778-Pigeon-Crash-Test-Skin) and [Pigeon Security Skin](http://www.beamng.com/threads/8694-Pigeon-Security-Skin) for Pigeon.
