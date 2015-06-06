@@ -5,7 +5,7 @@ This app lets you change the skin of vehicle in the game.
 
 How to use
 ----------
-Download any skin, create a folder for this skin in _**\<game_folder\>\vehicles\\\<vehicle_name\>\skins**_ (if _skins_ folder does not exist - create it) and copy the skin files to this folder.
+Download any skin, create a folder for this skin in _**\<game_folder\>\content\vehicles\\\<vehicle_name\>\skins**_ (if _skins_ folder does not exist - create it) and copy the skin files to this folder.
 
 How to install
 --------------
@@ -14,9 +14,9 @@ Just extract the [archive](https://github.com/IncoCode/SkinSelector-BeamNG/relea
 Example
 -------
 You need to install two skins: [Pigeon Crash Test Skin](http://www.beamng.com/threads/8778-Pigeon-Crash-Test-Skin) and [Pigeon Security Skin](http://www.beamng.com/threads/8694-Pigeon-Security-Skin) for Pigeon.
-Download the archive of the first skin and extract it in _\<game_folder\>\vehicles\pigeon\skins\Carsh Test Skin_ .
-Do the same thing with the second skin, but the file should be extracted to a different folder: _\<game_folder\>\vehicles\pigeon\skins\Security Skin_ .
-Now run the game, select the Pigeon, press **CTRL+S** (use the same keys to hide skin selector form) and choose the desired skin.
+Download the archive of the first skin and extract it in _\<game_folder\>\content\vehicles\pigeon\skins\Carsh Test Skin_ .
+Do the same thing with the second skin, but the file should be extracted to a different folder: _\<game_folder\>\content\vehicles\pigeon\skins\Security Skin_ .
+Now run the game, select the Pigeon and choose the desired skin.
 
 How does it work
 ----------------
