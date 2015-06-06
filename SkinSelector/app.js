@@ -2,6 +2,8 @@
 
 function SkinSelector(){}
 
+this.needUpd = true;
+
 SkinSelector.prototype.executeScriptFile = function(fileName) {
 	var self = this;
 
@@ -16,7 +18,6 @@ SkinSelector.prototype.changeMatFile = function(vehicleDir, skinName) {
 	self.executeScriptFile( 'getSkinsFilesFunc.cs' );
 	callGameEngineFuncCallback('getSkinsFiles("' +vehicleDir +'", "' +skinDir +'", "' +skinName +'")', function(result) {
 		callGameEngineFunc('beamNGReloadCurrentVehicle();');
-		self.hide();
 	});
 }
 
@@ -41,10 +42,21 @@ SkinSelector.prototype.selectSkin = function(skinName) {
 SkinSelector.prototype.updSkinsList = function() {
 	$(this.skinList).empty();
 	var self = this;
+	console.log('SkinSelector 1');
+	setTimeout(function() {
+		console.log('SkinSelector 4');
+		if ( $(self.skinList).has('option').length === 0 ) {
+			console.log('SkinSelector 5');
+			self.updSkinsList();
+		}
+	}, 3000);
 
 	callLuaFuncCallback('v.vehicleDirectory', function(vDir) {
+		console.log('SkinSelector 2');
 		callGameEngineFuncCallback( 'getDirectoryList("' +vDir +"skins/" +'")', function(arg) {
+			console.log('SkinSelector 3');
 			$(self.skinList).append('<option value="Default">Default</option>');
+			self.needUpd = true;
 			if ( arg == "" ) {
 				return;
 			}
@@ -76,6 +88,14 @@ SkinSelector.prototype.show = function() {
 	$(this.rootElement).show("slow");
 }
 
+SkinSelector.prototype.onVehicleReset = function() {
+	if ( this.needUpd ) {
+		this.needUpd = false;
+		this.updSkinsList();
+		console.log('1');
+	}
+}
+
 SkinSelector.prototype.initialize = function(){
 	var self = this;
 	this.vehicleLastSkin = {};
@@ -87,24 +107,7 @@ SkinSelector.prototype.initialize = function(){
 		var selectedSkin = $(self.skinList).val();
 		self.selectSkin( selectedSkin );
 	});
-	$('<button class="ssBtn">Hide</button>').appendTo(this.rootDiv).click(function(){
-		self.hide();
-	});
-	$( document ).bind( "keydown", function(evt) {
-		if ( evt.ctrlKey && evt.keyCode == 83 )
-		{
-			if ($(self.rootDiv).is(':visible'))
-			{
-				self.hide();
-			}
-			else
-			{
-				self.show();
-				self.updSkinsList();
-			}
-		}
-	});
+	this.updSkinsList();
 
-	console.log("SkinSelector inizialize");	
-	self.hide();
+	console.log("SkinSelector inizialize");
 };
